@@ -1,0 +1,9 @@
+{
+  "name": "base-styles",
+  "description": "",
+  "dependencies": {},
+  "development": {},
+  "styles": [
+    "base-styles.css"
+  ]
+}

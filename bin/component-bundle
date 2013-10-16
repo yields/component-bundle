@@ -1,0 +1,214 @@
+#!/usr/bin/env node
+
+/**
+ * dependencies
+ */
+
+var Builder = require('component-builder');
+var write = require('fs').writeFileSync;
+var read = require('fs').readFileSync;
+var exists = require('fs').existsSync;
+var component = require('component');
+var program = require('commander');
+var mkdir = require('mkdirp');
+var util = component.utils;
+var path = require('path');
+var puts = util.log;
+
+/**
+ * Options
+ */
+
+program
+  .option('-o, --out <dir>', 'output directory [./bundles]', 'bundles')
+  .option('-n, --name <file>', 'base name for build files [build]', 'build')
+  .option('-p, --prefix', 'prefix css asset urls')
+  .option('-c, --copy', 'copy instead of linking')
+  .option('-s, --standalone', 'build standalone')
+  .option('-R, --no-require', 'exclude require')
+  .option('-d, --dev', 'development bundles')
+  .option('-v, --verbose', 'verbose output');
+
+/**
+ * Examples
+ */
+
+program.on('--help', function(){
+  console.log();
+  console.log('  Examples:');
+  console.log();
+  console.log('    # bundle to ./bundles');
+  console.log('    $ component bundle');
+  console.log();
+  console.log('    # bundle to ./bundle');
+  console.log('    $ component bundle --out bundle');
+  console.log();
+});
+
+/**
+ * Parse argv
+ */
+
+program.parse(process.argv);
+
+/**
+ * component.json
+ */
+
+if (!exists('component.json')) {
+  util.fatal('missing component.json');
+}
+
+/**
+ * Meta
+ */
+
+var meta = JSON.parse(read('component.json', 'utf-8'));
+
+/**
+ * mkdir
+ */
+
+mkdir.sync(program.out);
+
+/**
+ * Bundles
+ */
+
+var bundles = meta.bundles
+  || meta.local
+  || [];
+
+/**
+ * Stats
+ */
+
+var start = new Date;
+var built = 0;
+
+/**
+ * Build
+ */
+
+bundles.forEach(function(bundle){
+  var dir = program.out + '/' + bundle;
+
+  // builder
+  mkdir.sync(dir);
+  var builder = new Builder(process.cwd());
+  builder.config.local = [bundle];
+
+  // copy
+  if (program.copy) builder.copyFiles();
+
+  // assets
+  builder.copyAssetsTo(dir);
+
+  // prefix
+  if (program.dev) builder.prefixUrls('./');
+  if (program.prefix) builder.prefixUrls(program.prefix);
+
+  // path
+  var path = program.out
+    + '/' + bundle
+    + '/' + program.name;
+
+  // development
+  if (program.dev) {
+    builder.development();
+    builder.addSourceURLs();
+  }
+
+  // build
+  builder.build(function(err, obj){
+    if (err) util.fatal(err.message);
+
+    // blank
+    if (0 == built && program.verbose) console.log();
+
+    // src
+    var css = obj.css.trim();
+    var js = '';
+
+    // js
+    if (obj.js.trim()) {
+      var name = 'string' == typeof standalone
+        ? standalone
+        : meta.name;
+
+      // require?
+      if (program.require) js += obj.require;
+
+      // js
+      js += obj.js;
+
+      // standalone
+      if (program.standalone) js = amd(js, name);
+    }
+
+    // write js
+    if (js) {
+      write(path + '.js', js);
+      puts('wrote', path + '.js');
+      puts('js', bytes(js));
+    }
+
+    // write css
+    if (css) {
+      write(path + '.css', css);
+      puts('wrote', path + '.css');
+      puts('css', bytes(css));
+    }
+
+    // blank
+    if (++built == bundles.length) {
+      puts('took', (new Date - start) + 'ms');
+      console.log();
+    }
+  });
+});
+
+/**
+ * Get bytes of `str`.
+ *
+ * @param {String} str
+ * @return {String}
+ */
+
+function bytes(str){
+  return (Buffer.byteLength(str, 'utf-8') / 1024 | 0) + 'kb';
+}
+
+/**
+ * Wrap the given `js` in amd.
+ *
+ * @param {String} js
+ * @param {String} global
+ * @return {String}
+ */
+
+function amd(js, global){
+  return [
+    ';(function(){',
+    expose(global)
+  ].join('\n' + js);
+}
+
+/**
+ * Expose `global`.
+ *
+ * @param {String} global
+ * @return {String}
+ */
+
+function expose(global){
+  return [
+    'if ("object" == typeof exports) {',
+    '  module.exports = require("' + global + '");',
+    '} else if ("function" == typeof define && define.amd) {',
+    '  define(function(){ return require("' + global + '");',
+    '} else {',
+    '  this["' + global + '"] = require("' + global + '");',
+    '}'
+  ].join('\n');
+}

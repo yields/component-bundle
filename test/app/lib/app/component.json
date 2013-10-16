@@ -1,0 +1,13 @@
+{
+  "name": "app",
+  "description": "",
+  "main": "index.js",
+  "scripts": ["index.js"],
+  "local": ["user", "base-styles"],
+  "dependencies": {
+    "component/model": "*",
+    "component/reactive": "*",
+    "component/dom": "*",
+    "yields/k": "*"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "name": "signup",
+  "description": "",
+  "main": "index.js",
+  "scripts": ["index.js"],
+  "local": ["user", "base-styles"]
+}

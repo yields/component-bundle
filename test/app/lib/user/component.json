@@ -1,0 +1,9 @@
+{
+  "name": "user",
+  "description": "user model",
+  "main": "index.js",
+  "scripts": ["index.js"],
+  "dependencies": {
+    "component/model": "*"
+  }
+}

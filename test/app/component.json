@@ -1,0 +1,11 @@
+{
+  "name": "app",
+  "description": "",
+  "paths": ["lib"],
+  "local": [
+    "app",
+    "signup",
+    "login",
+    "home"
+  ]
+}

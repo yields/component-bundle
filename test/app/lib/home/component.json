@@ -1,0 +1,14 @@
+{
+  "name": "home",
+  "description": "",
+  "dependencies": {
+    "ianstormtaylor/reset": "*",
+    "component/swipe": "*"
+  },
+  "development": {},
+  "main": "index.js",
+  "local": ["base-styles"],
+  "scripts": [
+    "index.js"
+  ]
+}

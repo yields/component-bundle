@@ -3,7 +3,7 @@
   "description": "component bundle",
   "version": "0.0.1",
   "bin": {
-    "component-bundle": "bin/component-bundle",
+    "component-bundle": "bin/component-bundle"
   },
   "dependencies": {
     "commander": "~2.0.0",

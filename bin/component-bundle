@@ -206,7 +206,7 @@ function expose(global){
     'if ("object" == typeof exports) {',
     '  module.exports = require("' + global + '");',
     '} else if ("function" == typeof define && define.amd) {',
-    '  define(function(){ return require("' + global + '");',
+    '  define(function(){ return require("' + global + '"); });',
     '} else {',
     '  this["' + global + '"] = require("' + global + '");',
     '}'

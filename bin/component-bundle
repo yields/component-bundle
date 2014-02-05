@@ -25,7 +25,7 @@ program
   .option('-n, --name <file>', 'base name for build files [build]', 'build')
   .option('-p, --prefix', 'prefix css asset urls')
   .option('-c, --copy', 'copy instead of linking')
-  .option('-s, --standalone', 'build standalone')
+  .option('-s, --standalone [name]', 'build standalone')
   .option('-R, --no-require', 'exclude require')
   .option('-d, --dev', 'development bundles')
   .option('-v, --verbose', 'verbose output')
@@ -146,9 +146,9 @@ bundles.forEach(function(bundle){
 
     // js
     if (obj.js.trim()) {
-      var name = 'string' == typeof standalone
-        ? standalone
-        : meta.name;
+      var name = 'string' == typeof program.standalone
+        ? program.standalone
+        : bundle;
 
       // require?
       if (program.require) js += obj.require;

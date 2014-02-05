@@ -13,6 +13,7 @@ var program = require('commander');
 var mkdir = require('mkdirp');
 var util = component.utils;
 var path = require('path');
+var resolve = path.resolve;
 var puts = util.log;
 
 /**
@@ -27,7 +28,8 @@ program
   .option('-s, --standalone', 'build standalone')
   .option('-R, --no-require', 'exclude require')
   .option('-d, --dev', 'development bundles')
-  .option('-v, --verbose', 'verbose output');
+  .option('-v, --verbose', 'verbose output')
+  .option('-u, --use <name>', 'use the given build plugin(s)')
 
 /**
  * Examples
@@ -97,6 +99,18 @@ bundles.forEach(function(bundle){
   mkdir.sync(dir);
   var builder = new Builder(process.cwd());
   builder.config.local = [bundle];
+
+  // require middleware plugins
+  if (program.use) {
+    var modules = program.use.split(',');
+    modules.forEach(function(mod){
+      var resolved = resolve(mod)
+        , real = exists(resolved) || exists(resolved + '.js')
+        , module = resolve('node_modules', mod);
+
+      builder.use(real ? require(resolved) : require(module));
+    });
+  }
 
   // copy
   if (program.copy) builder.copyFiles();

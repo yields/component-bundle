@@ -204,8 +204,10 @@ function bytes(str){
 function amd(js, global){
   return [
     ';(function(){',
-    expose(global)
-  ].join('\n' + js);
+    js,
+    expose(global),
+    '})();'
+  ].join('\n');
 }
 
 /**

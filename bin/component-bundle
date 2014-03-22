@@ -15,6 +15,7 @@ var util = component.utils;
 var path = require('path');
 var resolve = path.resolve;
 var puts = util.log;
+var Batch = require('batch');
 
 /**
  * Options
@@ -92,7 +93,26 @@ var built = 0;
  * Build
  */
 
+var batch = new Batch;
+batch.concurrency(2);
 bundles.forEach(function(bundle){
+  batch.push(function (done) {
+    build(bundle, done);
+  });
+});
+
+batch.end(function (err) {
+  if (err) util.fatal(err.message);
+});
+
+/**
+ * Build the given `bundle`.
+ *
+ * @param {Object} bundle
+ * @param {Function} fn
+ */
+
+function build(bundle, fn) {
   var dir = program.out + '/' + bundle;
 
   // builder
@@ -135,7 +155,7 @@ bundles.forEach(function(bundle){
 
   // build
   builder.build(function(err, obj){
-    if (err) util.fatal(err.message);
+    if (err) return fn(err);
 
     // blank
     if (0 == built && program.verbose) console.log();
@@ -179,8 +199,10 @@ bundles.forEach(function(bundle){
       puts('took', (new Date - start) + 'ms');
       console.log();
     }
+
+    fn(null);
   });
-});
+}
 
 /**
  * Get bytes of `str`.

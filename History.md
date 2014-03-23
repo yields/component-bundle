@@ -1,4 +1,10 @@
 
+0.1.1 / 2014-03-22
+==================
+
+ * Use batch for concurrency control
+ * Add installation note
+
 0.1.0 / 2014-02-05 
 ==================
 

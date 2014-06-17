@@ -123,7 +123,7 @@ function build(bundle, fn) {
   // require middleware plugins
   if (program.use) {
     var modules = program.use.split(',');
-    modules.forEach(function(mod){
+    modules.filter(Boolean).forEach(function(mod){
       var resolved = resolve(mod)
         , real = exists(resolved) || exists(resolved + '.js')
         , module = resolve('node_modules', mod);

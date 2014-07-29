@@ -120,7 +120,9 @@ function buildDir(builder, bundle) {
     if (!exists(config)) throw 'Dependency ' + bundle + ' not found!';
 
     config = require(config);
-    dir.push(config.version || 'nover');
+    if (config.version) {
+        dir.push(config.version);
+    }
   }
   return dir.join('/');
 }

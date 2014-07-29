@@ -107,8 +107,7 @@ batch.end(function (err) {
 });
 
 function buildDir(builder, bundle) {
-  var dir = [program.out];
-  dir.push(bundle);
+  var dir = path.join(program.out, bundle);
 
   if (program.append) {
     var i = 0, len;
@@ -121,10 +120,10 @@ function buildDir(builder, bundle) {
 
     config = require(config);
     if (config.version) {
-        dir.push(config.version);
+        dir = path.join(dir, config.version);
     }
   }
-  return dir.join('/');
+  return dir;
 }
 
 /**
@@ -166,8 +165,7 @@ function build(bundle, fn) {
   if (program.prefix) builder.prefixUrls(program.prefix);
 
   // path
-  var path = dir
-    + '/' + program.name;
+  var buildPath = path.join(dir, program.name);
 
   // development
   if (program.dev) {
@@ -204,15 +202,15 @@ function build(bundle, fn) {
 
     // write js
     if (js) {
-      write(path + '.js', js);
-      puts('wrote', path + '.js');
+      write(buildPath + '.js', js);
+      puts('wrote', buildPath + '.js');
       puts('js', bytes(js));
     }
 
     // write css
     if (css) {
-      write(path + '.css', css);
-      puts('wrote', path + '.css');
+      write(buildPath + '.css', css);
+      puts('wrote', buildPath + '.css');
       puts('css', bytes(css));
     }
 

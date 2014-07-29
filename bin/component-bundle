@@ -117,7 +117,7 @@ function buildDir(builder, bundle) {
       config = resolve(builder.config.paths[i], bundle, 'component.json');
       if (exists(config)) break;
     }
-    if (!exists(config)) throw 'Dependency ' + bundle + ' not found!';
+    if (!exists(config)) throw new Error('Dependency ' + bundle + ' not found!');
 
     config = require(config);
     if (config.version) {

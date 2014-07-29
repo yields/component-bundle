@@ -11,6 +11,9 @@
     "component/dom": "*",
     "yields/k": "*"
   },
+  "templates": [
+    "tmpl/index.hbs"
+  ],
   "images": [
     "test.png"
   ],

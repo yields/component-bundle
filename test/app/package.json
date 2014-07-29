@@ -1,0 +1,8 @@
+{
+    "name": "app",
+    "dependencies": {
+        "component-builder-handlebars": "0.2.0",
+        "component-builder": "~0.10",
+        "component": "0.19.9"
+    }
+}

@@ -13,11 +13,5 @@
   },
   "templates": [
     "tmpl/index.hbs"
-  ],
-  "images": [
-    "test.png"
-  ],
-  "styles": [
-    "styles.css"
   ]
 }

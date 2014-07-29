@@ -31,6 +31,7 @@ program
   .option('-d, --dev', 'development bundles')
   .option('-v, --verbose', 'verbose output')
   .option('-u, --use <name>', 'use the given build plugin(s)')
+  .option('-a, --append', 'append component version in path');
 
 /**
  * Examples
@@ -113,12 +114,20 @@ batch.end(function (err) {
  */
 
 function build(bundle, fn) {
-  var dir = program.out + '/' + bundle;
 
   // builder
-  mkdir.sync(dir);
   var builder = new Builder(process.cwd());
   builder.config.local = [bundle];
+
+  var dir = [program.out, bundle];
+  if (program.append) {
+    var bundleConfig = require(resolve(builder.config.paths[0], bundle, 'component.json'));
+    dir.push(bundleConfig.version);
+  }
+
+  dir = dir.join('/');
+
+  mkdir.sync(dir);
 
   // require middleware plugins
   if (program.use) {
@@ -143,8 +152,7 @@ function build(bundle, fn) {
   if (program.prefix) builder.prefixUrls(program.prefix);
 
   // path
-  var path = program.out
-    + '/' + bundle
+  var path = dir
     + '/' + program.name;
 
   // development

@@ -1,6 +1,7 @@
 {
   "name": "signup",
   "description": "",
+  "version": "8.2.1",
   "main": "index.js",
   "scripts": ["index.js"],
   "local": ["user", "base-styles"]

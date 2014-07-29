@@ -1,6 +1,7 @@
 {
   "name": "login",
   "description": "",
+  "version": "3.2.1",
   "main": "index.js",
   "scripts": ["index.js"],
   "local": ["user", "base-styles"]

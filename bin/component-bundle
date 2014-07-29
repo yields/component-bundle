@@ -106,6 +106,25 @@ batch.end(function (err) {
   if (err) util.fatal(err.message);
 });
 
+function buildDir(builder, bundle) {
+  var dir = [program.out];
+  dir.push(bundle);
+
+  if (program.append) {
+    var i = 0, len;
+    var config;
+    for (len = builder.config.paths.length; i < len; i++) {
+      config = resolve(builder.config.paths[i], bundle, 'component.json');
+      if (exists(config)) break;
+    }
+    if (!exists(config)) throw 'Dependency ' + bundle + ' not found!';
+
+    config = require(config);
+    dir.push(config.version || 'nover');
+  }
+  return dir.join('/');
+}
+
 /**
  * Build the given `bundle`.
  *
@@ -119,14 +138,7 @@ function build(bundle, fn) {
   var builder = new Builder(process.cwd());
   builder.config.local = [bundle];
 
-  var dir = [program.out, bundle];
-  if (program.append) {
-    var bundleConfig = require(resolve(builder.config.paths[0], bundle, 'component.json'));
-    dir.push(bundleConfig.version);
-  }
-
-  dir = dir.join('/');
-
+  var dir = buildDir(builder, bundle);
   mkdir.sync(dir);
 
   // require middleware plugins

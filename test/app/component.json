@@ -6,6 +6,7 @@
     "app",
     "signup",
     "login",
-    "home"
+    "home",
+    "neg"
   ]
 }

@@ -4,7 +4,7 @@ SRC= $(wildcard lib/*/*.js)
 CSS= $(wildcard lib/*/*.css)
 
 bundles: components $(SRC) $(CSS)
-	@../../bin/component-bundle --use plugin,
+	@../../bin/component-bundle --use plugin,hbs, --append
 
 components: $(META)
 	@component install

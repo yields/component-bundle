@@ -31,6 +31,7 @@ program
   .option('-d, --dev', 'development bundles')
   .option('-v, --verbose', 'verbose output')
   .option('-u, --use <name>', 'use the given build plugin(s)')
+  .option('-a, --append', 'append component version in path');
 
 /**
  * Examples
@@ -105,6 +106,26 @@ batch.end(function (err) {
   if (err) util.fatal(err.message);
 });
 
+function buildDir(builder, bundle) {
+  var dir = path.join(program.out, bundle);
+
+  if (program.append) {
+    var i = 0, len;
+    var config;
+    for (len = builder.config.paths.length; i < len; i++) {
+      config = resolve(builder.config.paths[i], bundle, 'component.json');
+      if (exists(config)) break;
+    }
+    if (!exists(config)) throw new Error('Dependency ' + bundle + ' not found!');
+
+    config = require(config);
+    if (config.version) {
+        dir = path.join(dir, config.version);
+    }
+  }
+  return dir;
+}
+
 /**
  * Build the given `bundle`.
  *
@@ -113,12 +134,13 @@ batch.end(function (err) {
  */
 
 function build(bundle, fn) {
-  var dir = program.out + '/' + bundle;
 
   // builder
-  mkdir.sync(dir);
   var builder = new Builder(process.cwd());
   builder.config.local = [bundle];
+
+  var dir = buildDir(builder, bundle);
+  mkdir.sync(dir);
 
   // require middleware plugins
   if (program.use) {
@@ -143,9 +165,7 @@ function build(bundle, fn) {
   if (program.prefix) builder.prefixUrls(program.prefix);
 
   // path
-  var path = program.out
-    + '/' + bundle
-    + '/' + program.name;
+  var buildPath = path.join(dir, program.name);
 
   // development
   if (program.dev) {
@@ -182,15 +202,15 @@ function build(bundle, fn) {
 
     // write js
     if (js) {
-      write(path + '.js', js);
-      puts('wrote', path + '.js');
+      write(buildPath + '.js', js);
+      puts('wrote', buildPath + '.js');
       puts('js', bytes(js));
     }
 
     // write css
     if (css) {
-      write(path + '.css', css);
-      puts('wrote', path + '.css');
+      write(buildPath + '.css', css);
+      puts('wrote', buildPath + '.css');
       puts('css', bytes(css));
     }
 

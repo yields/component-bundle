@@ -3,3 +3,7 @@ body {
   font: 200 12px/1.6 'Helvetica Neue';
   padding: 100px;
 }
+
+.test-selector {
+    background: url('images/test.png') no-repeat center;
+}

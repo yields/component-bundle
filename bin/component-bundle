@@ -139,7 +139,7 @@ function build(bundle, fn) {
   builder.copyAssetsTo(dir);
 
   // prefix
-  if (program.dev) builder.prefixUrls('./');
+  if (program.dev) builder.prefixUrls('.');
   if (program.prefix) builder.prefixUrls(program.prefix);
 
   // path

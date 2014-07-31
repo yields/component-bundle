@@ -1,4 +1,10 @@
 
+0.1.3 / 2014-07-31
+==================
+
+  * fix prefix for dev mode
+  * read prefix and passes it on to component build
+
 0.1.2 / 2014-06-17
 ==================
 

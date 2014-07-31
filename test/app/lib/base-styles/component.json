@@ -5,5 +5,8 @@
   "development": {},
   "styles": [
     "base-styles.css"
+  ],
+  "images": [
+    "images/test.png"
   ]
 }

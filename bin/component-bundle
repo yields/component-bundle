@@ -24,7 +24,7 @@ var Batch = require('batch');
 program
   .option('-o, --out <dir>', 'output directory [./bundles]', 'bundles')
   .option('-n, --name <file>', 'base name for build files [build]', 'build')
-  .option('-p, --prefix', 'prefix css asset urls')
+  .option('-p, --prefix <str>', 'prefix css asset urls')
   .option('-c, --copy', 'copy instead of linking')
   .option('-s, --standalone [name]', 'build standalone')
   .option('-R, --no-require', 'exclude require')
@@ -139,7 +139,7 @@ function build(bundle, fn) {
   builder.copyAssetsTo(dir);
 
   // prefix
-  if (program.dev) builder.prefixUrls('./');
+  if (program.dev) builder.prefixUrls('.');
   if (program.prefix) builder.prefixUrls(program.prefix);
 
   // path
